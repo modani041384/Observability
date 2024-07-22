@@ -13,9 +13,8 @@ spec:
         app: backend
     spec:
       containers:
-      - name: backend
-        # We advise you to build, push and use your own image, instead of using instructor's image.      
-        image: ghcr.io/jasonsmithio/backend:v1
+      - name: backend    
+        image: modani130484/backend:v1
         ports:
         - containerPort: 8081
 ---
