@@ -2,6 +2,14 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend-app
+  annotations:
+    sidecar.jaegertracing.io/inject: "true"
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /metrics
+    prometheus.io/port: backendport
+  labels:
+    name: backend
+    release: prometheus
 spec:
   replicas: 3
   selector:
@@ -13,19 +21,30 @@ spec:
         app: backend
     spec:
       containers:
-      - name: backend    
-        image: modani130484/backend:v1
+      - name: backend
+        image: harinipavithra/backend:latest
+        imagePullPolicy: Always
         ports:
-        - containerPort: 8081
+        - name: backendport
+          containerPort: 8080
+          protocol: TCP
+        env:
+        - name: JAEGER_HOST
+          value: simplest-query.observability.svc.cluster.local
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: backend-service
+  labels:
+    app: backend
 spec:
   selector:
     app: backend
   ports:
-    - port: 8081
-      targetPort: 8080
-  type: LoadBalancer
+    - name: backend
+      protocol: TCP
+      port: 80
+      targetPort: backendport
+      nodePort: 30000
+  type: NodePort
