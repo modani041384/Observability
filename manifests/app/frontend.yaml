@@ -23,7 +23,7 @@ spec:
       containers:
       - name: frontend
         imagePullPolicy: Always
-        image: harinipavithra/frontend:latest
+        image: modani130484/frontend:latest
         ports:
         - name: frontendport
           containerPort: 8080
